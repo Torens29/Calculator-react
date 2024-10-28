@@ -1,0 +1,19 @@
+.buttons {
+    display: flex;
+    flex-direction: row;
+    user-select: none;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
+}
+
+.buttonGroupCol,
+.buttonGroupNums {
+    flex-direction: column;
+}
+
+.buttonGroupNums > :last-child {
+    width: 80%;
+}
