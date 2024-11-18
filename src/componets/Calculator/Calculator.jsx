@@ -4,6 +4,7 @@ import { Buttons } from './Buttons/Buttons';
 
 import { useCalc, useKeyPressDetector } from './hooks';
 import { CalculatorContext } from './context';
+import { SystemCalc } from '../SystemCalc/SystemCalc';
 
 import styles from './Calculator.module.css';
 
@@ -11,16 +12,19 @@ export const Calculator = () => {
     const calcProps = useCalc();
     const { value, progress, history, onInput, onCalc } = calcProps;
 
-    useKeyPressDetector({ onCalc });
+    const pressedKey = useKeyPressDetector({ onCalc });
 
     return (
-        <CalculatorContext.Provider value={calcProps}>
+        <CalculatorContext.Provider value={{ ...calcProps, pressedKey }}>
             <div className={styles.calculator}>
-                {/* <KeyPressDetector inputState={[value, setValue]} forFuncButton={{ useResult, useFunc }} /> */}
                 <div className={styles.progress}>{progress}</div>
                 <Input value={value} onChange={onInput} />
                 <Buttons />
-                <div className={styles.history}>{history}</div>
+                <SystemCalc className={styles.systemCalc} />
+            </div>
+            <div className={styles.history}>
+                History:
+                <div>{history}</div>
             </div>
         </CalculatorContext.Provider>
     );

@@ -7,7 +7,7 @@
     width: 10px;
     border: 1px solid;
 
-    padding: 5px;
+    padding: 10px;
     margin: 2px;
 }
 
@@ -15,7 +15,9 @@
     cursor: pointer;
 }
 
+.buttonActive,
 .button:active {
     background: #fbfbc5;
-	border: 1px dotted;
+    border: 1px dotted;
 }
+.button:focus { outline: none; }

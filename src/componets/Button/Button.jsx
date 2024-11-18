@@ -1,9 +1,6 @@
-import cn from "classnames";
-import styles from "./Button.module.css" 
+import cn from 'classnames';
+import styles from './Button.module.css';
 
-export const Button = ({ className, ...props }) => (
-    <button
-        {...props}
-        className={cn(className, styles.button)}
-    />
+export const Button = ({ active, className, ...props }) => (
+    <button {...props} className={cn(className, active && styles.buttonActive, styles.button)} />
 );

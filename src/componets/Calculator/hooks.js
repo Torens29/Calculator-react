@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import { div, mult, diff, sum } from '../../lib/maths';
 
@@ -10,36 +10,51 @@ export const useCalc = () => {
 
     const [progress, setProgress] = useState('');
     const [history, setHistory] = useState([]);
+    const ops = useMemo(() => ['+', '-', '*', '/', '.'], []);
 
     const changeInput = useCallback((value) => {
         if (value === '') value = 0;
         setValue(+value);
     }, []);
 
+    const addOper = useCallback(
+        (symbol) => {
+            if (ops.includes(progress.at(-2))) {
+                setProgress(progress.slice(0, -2) + symbol);
+            } else {
+                setResult(value);
+                setProgress(value + symbol);
+            }
+        },
+        [value, progress, ops]
+    );
+
     const func = useCallback(
         (buttonValue) => {
             const selectFunc = (func) => {
-                setResult(value);
                 setValue(0);
                 setFuncCalc(func);
             };
 
+            console.log('buttonValue', buttonValue);
+
             switch (buttonValue) {
+                case 'Enter':
                 case '=':
                     setPressResult(true);
                     setProgress(progress + value + ' = ');
 
+                    setValue(funcCalc(result, value));
                     setHistory([
                         ...history,
-                        <div className="calculator__historyLine" key={value}>
-                            {progress} {value}
+                        <div className="calculator__historyLine" key={history.length}>
+                            {progress} {value} = {funcCalc(result, value)}
                         </div>,
                     ]);
-                    setValue(funcCalc(result, value));
-                    console.log('value', value, result, progress);
 
                     setFuncCalc();
                     break;
+                case 'Backspace':
                 case '<=':
                     setValue(value.toString().slice(0, -1));
                     break;
@@ -47,19 +62,19 @@ export const useCalc = () => {
                     setValue(0);
                     break;
                 case '+':
-                    setProgress(value + ' + ');
+                    addOper(' + ');
                     selectFunc(sum);
                     break;
                 case '-':
-                    setProgress(value + ' - ');
+                    addOper(' - ');
                     selectFunc(diff);
                     break;
                 case '/':
-                    setProgress(value + ' / ');
+                    addOper(' / ');
                     selectFunc(div);
                     break;
                 case '*':
-                    setProgress(value + ' * ');
+                    addOper(' * ');
                     selectFunc(mult);
                     break;
                 case '.':
@@ -68,7 +83,8 @@ export const useCalc = () => {
                 default:
                     if (typeof +buttonValue === 'number') {
                         if (pressResult) {
-                            console.log('pressResult', pressResult);
+                            setValue('0');
+                            setPressResult(false);
                         }
 
                         setValue((value) => {
@@ -82,7 +98,7 @@ export const useCalc = () => {
                     break;
             }
         },
-        [pressResult, value, progress, result, history, funcCalc]
+        [pressResult, value, progress, result, history, funcCalc, addOper]
     );
 
     return {
@@ -99,22 +115,39 @@ export const useCalc = () => {
 export const useKeyPressDetector = ({ onCalc }) => {
     const [pressedKey, setPressedKey] = useState(null);
 
-    const handleKeyPress = useCallback((event) => {
-        const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const handleKeyPress = useCallback(
+        (event) => {
+            console.log(event.key);
 
-        if (numbers.includes(event.key)) {
-            onCalc(event.key);
-        }
+            const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            const funcButton = ['+', '-', '*', '/', '.', '=', 'Enter', 'Backspace'];
 
-        setPressedKey(event.key);
-    });
+            if (numbers.includes(event.key) || funcButton.includes(event.key)) {
+                onCalc(event.key);
+            }
 
-    console.log(typeof pressedKey);
+            setPressedKey(event.key);
+        },
+        [onCalc]
+    );
+
+    const handleKeyUp = useCallback(() => {
+        setPressedKey(null);
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('keyup', handleKeyUp);
+        return () => {
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, [handleKeyUp]);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyPress);
         return () => {
             window.removeEventListener('keydown', handleKeyPress);
         };
-    }, []);
+    }, [handleKeyPress]);
+
+    return pressedKey;
 };

@@ -1,0 +1,18 @@
+.systemCalc{
+    
+}
+
+.convertNumbLine{
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+}
+
+.convertNumbLine div {
+
+}
+
+.nameFuncConvert{
+    min-width:  30px;
+    margin-right: 10px;
+}

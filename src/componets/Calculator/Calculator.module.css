@@ -3,7 +3,21 @@
     flex-direction: column;
 }
 
+.progress {
+    height: 20px;
+}
 
-.progress{
-	height: 20px
+.systemCalc {
+}
+
+.history {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.history div {
+    display: flex;
+    flex-direction: column-reverse;
 }

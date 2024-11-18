@@ -10,9 +10,18 @@ import { CalculatorContext } from '../context';
 import styles from './Buttons.module.css';
 
 const CalcButton = ({ symbol }) => {
-    const { onCalc } = useContext(CalculatorContext);
-
-    return <Button onClick={useCallback(() => onCalc(symbol), [onCalc, symbol])}>{symbol}</Button>;
+    const { onCalc, pressedKey } = useContext(CalculatorContext);
+    
+    return (
+        <Button
+            active={String(pressedKey) === String(symbol)}
+            onClick={useCallback(() => {
+                onCalc(String(pressedKey));
+            }, [onCalc, pressedKey,])}
+        >
+            {symbol}
+        </Button>
+    );
 };
 
 const ButtonsGroup = ({ items, length, className }) =>
@@ -35,7 +44,7 @@ export const Buttons = () => {
                 <ButtonsGroup items={nums} length={3} />
                 <CalcButton symbol="0" />
             </div>
-            <div className={styles.buttonGroup}>
+            <div className={cn(styles.buttonGroup, styles.buttonFunc)}>
                 <div className={styles.buttonGroup}>
                     <CalcButton symbol="res" />
                     <CalcButton symbol="<=" />
